@@ -1,0 +1,33 @@
+BoldAsFont=-1
+Font=Consolas
+FontHeight=12
+FontWeight=400
+ThemeFile=
+Columns=115
+Rows=35
+BellType=0
+CursorType=block
+CursorBlinks=no
+FontIsBold=no
+
+BackgroundColour=38,27,14
+ForegroundColour=255,255,255
+CursorColour=192,192,192
+
+BoldBlack=52,73,94
+Black=44,62,80
+BoldRed=247,162,27		//string formatting
+Red=192,57,43
+BoldGreen=139,110,70	//types
+Green=12,116,40
+BoldYellow=125,97,56	//line numbers
+Yellow=126,112,90
+BoldBlue=226,205,176	//#include
+Blue=44,115,186
+BoldMagenta=255,198,109	//literals and header files
+Magenta=83,56,139
+BoldCyan=139,110,70		//comments
+Cyan=122,160,133
+BoldWhite=236,240,241
+White=189,195,199
+Scrollbar=none

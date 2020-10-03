@@ -1,0 +1,251 @@
+" COMPATIBILITY:
+
+    " enter the current millenium
+    set nocompatible
+    filetype off
+
+    " Set vim encoding
+    set encoding=utf-8
+    set guifont=*
+
+" PLUGINS:
+
+    " runtime path for pathogen
+    execute pathogen#infect()
+
+    " Use fzf with vim
+    set rtp+=~/.fzf
+    " Bind fzf.vim to ctrl-p
+    map <C-p> :Files<CR>
+
+    " nerdtree shortcuts
+    map <C-n> :NERDTreeToggle<CR>
+    map <C-m> :NERDTreeFind<CR>
+    let NERDTreeShowHidden=1
+
+    " Some Ack settings
+    " Open a new tab and search for something
+    nmap ,a :Ack! ""<Left>
+    " Search for the word under the cursor in new tab
+    nmap ,A :Ack! <C-r><C-w><CR>
+
+    " markdown settings
+    let g:vim_markdown_folding_disabled = 1
+    let g:vim_markdown_conceal = 0
+    let g:vim_markdown_no_extensions_in_markdown = 1
+    let g:mkdp_browser = 'firefox'
+    let g:mkdp_refresh_slow = 0
+    let g:mkdp_markdown_css = '/Users/pbell/github-markdown.css'
+    let g:mkdp_preview_options = {
+        \ 'mkit': {},
+        \ 'katex': {},
+        \ 'uml': {},
+        \ 'maid': {},
+        \ 'disable_sync_scroll': 0,
+        \ 'sync_scroll_type': 'middle',
+        \ 'hide_yaml_meta': 1,
+        \ 'sequence_diagrams': {},
+        \ 'flowchart_diagrams': {},
+        \ 'content_editable': v:false
+        \ }
+    nmap M <Plug>MarkdownPreview
+
+    " Commentary plugin binds
+    nmap <C-c> gcc
+    vmap <C-c> gc
+
+    " Enable CSyntaxAfter syntax highlighting
+    autocmd! FileType c,cpp,java,php call CSyntaxAfter()
+
+" COMMANDS:
+
+    " shorthand to create tags file with ctags
+    " ^] jump to tag under cursor
+    " g^] ambiguous tags
+    " ^t jump back up the tag stack
+    command! MakeTags !ctags -R --exclude='*.js' .
+
+" GENERAL:
+
+    filetype plugin indent on
+    " show existing tab with 4 spaces width
+    set tabstop=4
+    " when indenting with '>', use 4 spaces width
+    set shiftwidth=4
+    " On pressing tab, insert 4 spaces
+    set expandtab
+    " Automatically update changed files
+    set autoread
+    " Enables relative, hybrid line numbers
+    set number relativenumber
+    set nu rnu
+
+    augroup numbertoggle
+      autocmd!
+      autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+      autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+    augroup END
+
+    " Disables word wrap by default
+    set wrap!
+    
+    " Toggle word-wrap
+    command! Wrap call ToggleWordWrap()
+    let s:wrapEnabled = 0
+    function! ToggleWordWrap()
+        if s:wrapEnabled
+            set wrap!
+            set wrapmargin=0
+            set fo-=ta
+            let s:wrapEnabled = 0
+        else
+            set wrap
+            set wrapmargin=5
+            set fo+=ta
+            let s:wrapEnabled = 1
+            norm mxggvG$gq`x
+        endif
+    endfunction
+
+    " Smart case for find
+    set ignorecase
+    set smartcase
+
+    " Remove automatic comment insertion
+    autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+    " Make scrolling faster
+    set ttyfast
+    set lazyredraw
+
+    " Make code completion faster
+    set complete-=i
+
+    " enable syntax and plugins
+    syntax enable
+    filetype plugin on
+
+    " Search down into subfolders
+    " Provides tab-completion for all file-related tasks
+    "set path+=**
+
+    " Display all matching files when we tab complete
+    set wildmenu
+
+    " Current file cd shortcut
+    set number
+
+    " Sets clipboard as default register
+    set clipboard=unnamedplus
+
+    " Set folding method and level on startup
+    set foldmethod=indent
+    set foldlevelstart=99
+
+    " Setting this because of a vulnerability in older version of Vim
+    set modelines=0
+    set nomodeline
+
+    " Set diff colorscheme
+    if &diff
+        highlight DiffAdd    cterm=bold ctermfg=2 ctermbg=22 gui=none guifg=bg guibg=Red
+        highlight DiffDelete cterm=bold ctermfg=2 ctermbg=88 gui=none guifg=bg guibg=Red
+        highlight DiffChange cterm=bold ctermfg=2 ctermbg=17 gui=none guifg=bg guibg=Red
+        highlight DiffText   cterm=bold ctermfg=2 ctermbg=6 gui=none guifg=bg guibg=Red
+    endif
+
+" MACROS:
+
+    " Newline without insert mode
+    map <C-o> O<Esc>
+
+    " Current file cd shortcut
+    map ,e :e <C-R>=fnameescape(expand("%:p:h")) . "/" <CR>
+
+    " Yank html skeleton into text document
+    nnoremap ,html :-1read ~/templates/skeleton.html<CR>3jwf>a
+
+    " Yank c skeleton into text document
+    nnoremap ,ct :-1read ~/templates/skeleton.c<CR>3jo
+
+    " Yank for loop skeleton into text document
+    nnoremap ,for :-1read ~/templates/for.txt<CR>f<la
+
+    " Search and replace shortcut
+    nnoremap ,sr :%s/\<\>//gc<C-Left><Right><Right><Right><Right><Right>
+
+    " 'Cut and paste' line range
+    nnoremap ,cp :,co.<Bar>,d<C-Left>
+
+    " Delete whitespace lines
+    nnoremap ,dw :g/^$/d<CR>
+
+    " <Ctrl-l> redraws the screen and removes any search highlighting.
+    nnoremap <silent> <C-l> :nohl<CR><C-l>
+
+    " Select all text
+    nnoremap <C-a> ggvG$
+
+    " Jump 20 lines
+    nnoremap <C-j> 20j
+    nnoremap <C-k> 20k
+
+    " Move forward/backward through words by 5
+    nnoremap <C-l> 5w
+    nnoremap <C-h> 5b
+
+    " Move forward/backward through tabs
+    nnoremap <S-l> gt
+    nnoremap <S-h> gT
+
+    " Remap semi-colon to colon
+    nnoremap ; :
+
+    " Toggle fold macro
+    nnoremap <C-f> za
+
+    " Open PDF with pdftotext using xpdf
+    :command! -complete=file -nargs=1 Rpdf :r !pdftotext -layout <q-args> -
+
+" REMAPPING:
+
+    " Enable backspace
+    set backspace=indent,eol,start
+
+    " don't move to the left when leaving insert mode
+    inoremap <Esc> <Esc>`^
+
+    " Bind Shift-E to move back to end of word
+    nnoremap <S-e> ge
+
+    " Disable arrow keys in normal mode, but enable for insert mode
+    nnoremap <Up> <Nop>
+    nnoremap <Down> <Nop>
+    nnoremap <Left> <Nop>
+    nnoremap <Right> <Nop>
+
+    imap <ESC>oA <ESC>ki
+    imap <ESC>oB <ESC>ji
+    imap <ESC>oC <ESC>li
+    imap <ESC>oD <ESC>hi
+
+    " Bind MiddleMouse, or foot pedal, to insert/normal mode
+    set mouse=a
+    nnoremap <MiddleMouse> i
+    inoremap <MiddleRelease> <Esc>
+
+    " Jump to <++> filler, delete, and enter insert mode
+    " "_ means 'put into empty buffer' so I can paste stuff after if I want
+    nnoremap <Space><Space> /<++><Enter>"_c4l 
+
+    " Create curly brace, square bracket, or parenthesis and jump to middle
+    inoremap ;{ <Space>{<Enter>}<Esc>ko
+    inoremap ;[ <Space>[<Enter>]<Esc>ko
+    inoremap ;( <Space>(<Enter>)<Esc>ko
+
+" DISABLED:
+
+    " Disable backspace and ctrl-h
+    "inoremap <C-h> <Nop>
+    "nnoremap <BS> <Nop>
+    "inoremap <BS> <Nop>
