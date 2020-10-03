@@ -166,7 +166,7 @@
     nnoremap ,html :-1read ~/templates/skeleton.html<CR>3jwf>a
 
     " Yank c skeleton into text document
-    nnoremap ,ct :-1read ~/templates/skeleton.c<CR>3jo
+    nnoremap ,ct :-1read ~/templates/skeleton.c<CR>2jo
 
     " Yank for loop skeleton into text document
     nnoremap ,for :-1read ~/templates/for.txt<CR>f<la
