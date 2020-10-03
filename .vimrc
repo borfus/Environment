@@ -80,6 +80,9 @@
     set number relativenumber
     set nu rnu
 
+    " Highlight all search matches
+    set hlsearch
+
     augroup numbertoggle
       autocmd!
       autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
@@ -181,7 +184,7 @@
     nnoremap ,dw :g/^$/d<CR>
 
     " <Ctrl-l> redraws the screen and removes any search highlighting.
-    nnoremap <silent> <C-l> :nohl<CR><C-l>
+    nnoremap <silent> <Space> :nohl<CR><C-l>
 
     " Select all text
     nnoremap <C-a> ggvG$
