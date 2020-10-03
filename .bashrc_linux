@@ -176,14 +176,11 @@ alias hgrip='grep -rn --color=always --ignore-case --include=\*.h'
 alias qfind='sudo find . -iname'
 alias afind='sudo find / -iname'
 
-# Quick list all
+# Quick list
 alias la='ls -a'
-
-# Quick list detailed
 alias ll='ls -lathr'
 
 # Quick find process
-# NOTE: installed 'htop' for graphical resource monitor
 alias psa='ps -a | grep'
 
 # Easy Navigation for bash
@@ -193,16 +190,15 @@ alias .3='cd ../../../'             # Go back 3 directory levels
 alias .4='cd ../../../../'          # Go back 4 directory levels
 alias .5='cd ../../../../../'       # Go back 5 directory levels
 alias .6='cd ../../../../../../'    # Go back 6 directory levels
+alias c='clear'                     # c: Clear terminal display
+
+# Quick dir navigate
 alias f='xdg-open .'                # f: Opens current directory in finder
 #alias f='ranger'                    # f: Opens current directory in finder
 alias ~="cd ~"                      # ~: Go Home
-alias c='clear'                     # c: Clear terminal display
-
-# Quickly navigate to desktop
 alias desk='cd ~/Desktop/'
-
-# Quickly navigate to downloads
 alias down='cd ~/Downloads/'
+alias dp="cd /DevProjects/"
 
 # Quickly extract tar.gz file
 alias untar='tar xvf'
@@ -212,9 +208,6 @@ alias img='geeqie'
 
 # Change diff to icdiff
 alias diff='icdiff -N'
-
-# Quickly cd to DevProjects
-alias dp="cd /DevProjects/"
 
 # Copy input to clipboard
 alias pbcopy="xclip -sel clip"
@@ -231,8 +224,6 @@ alias up='sudo apt-get update'
 alias ug='sudo apt-get upgrade'
 alias du='sudo apt-get dist-upgrade'
 alias ar='sudo apt-get autoremove'
-
-# Search apt for packages
 alias search='apt-cache search'
 
 # Pass in OP token after sign-in
