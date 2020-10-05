@@ -282,14 +282,23 @@ sr() { find . -type f -exec sed -i -e 's#'"$1"\#"$2"'#g' {} \;; }
 # Search and replace filenames recursively
 srf() { find . -depth -name \*"$1"\* -execdir bash -c 'mv -i "$1" "${1//'"$1"/"$2"'}"' bash {} \;; }
 
+# Convert a hex file to base64 then back to the original file
+hex2file() { cat "$1" | xxd -r -p | base64 | base64 --decode > "$2"; }
+
 # Prepend text to file
 prep() { echo "$2" | cat - $1 > temp && mv temp $1; }
 
-# Extend regex
-shopt -s extglob
+# Search git diffs and grep text
+gitgrep() { git log -S"$1" -p --all; }
 
 # Quickly open pdf with Zathura
 pdf() { zathura "$1" & }
+
+# Remove all files (recursively) with a specific pattern
+rmpat() { find . -name "$1" -delete; }
+
+# Extend regex
+shopt -s extglob
 
 # Git branch tab-completion
 [ -f ~/.git-completion.bash ] && . ~/.git-completion.bash
