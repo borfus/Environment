@@ -303,6 +303,9 @@ pdf() { zathura "$1" & }
 # Remove all files (recursively) with a specific pattern
 rmpat() { find . -name "$1" -delete; }
 
+# Allow a port through firewall
+addport() { sudo ufw allow "$1"; }
+
 # Extend regex
 shopt -s extglob
 
