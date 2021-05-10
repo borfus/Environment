@@ -122,6 +122,9 @@ PATH=$PATH:/home/borfus/.local/bin
 # Remove duplicate paths from $PATH
 PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
 
+# 010 Editor 
+PATH=$PATH:/home/borfus/010editor;export PATH; # ADDED BY INSTALLER - DO NOT EDIT OR DELETE THIS COMMENT - 87FF8EFC-483D-BCAA-D67D-735CF60410D1 DEB385BD-25BD-6270-356F-72EFDB692649
+
 ############################# ENV VARS ############################
 
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
@@ -264,7 +267,11 @@ alias protontricks-flat='flatpak run --command=protontricks com.valvesoftware.St
 alias powerh='system76-power profile performance'
 alias powerm='system76-power profile balanced'
 alias powerl='system76-power profile battery'
+alias graphn='system76-power graphics nvidia'
+alias graphi='system76-power graphics integrated'
 alias power='system76-power profile'
+alias cputemp='watch -n 2 sensors'
+alias gputemp='watch -n 2 nvidia-smi'
 
 ############################# END ALIAS #############################
 
@@ -315,4 +322,3 @@ shopt -s extglob
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-PATH=$PATH:/home/borfus/010editor;export PATH; # ADDED BY INSTALLER - DO NOT EDIT OR DELETE THIS COMMENT - 87FF8EFC-483D-BCAA-D67D-735CF60410D1 DEB385BD-25BD-6270-356F-72EFDB692649
