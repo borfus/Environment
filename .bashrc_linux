@@ -268,10 +268,14 @@ alias powerh='system76-power profile performance'
 alias powerm='system76-power profile balanced'
 alias powerl='system76-power profile battery'
 alias graphn='system76-power graphics nvidia'
+alias graphh='system76-power graphics hybrid'
 alias graphi='system76-power graphics integrated'
 alias power='system76-power profile'
 alias cputemp='watch -n 2 sensors'
 alias gputemp='watch -n 2 nvidia-smi'
+
+# System76 BIOS Update
+alias biosupdate='system76-firmware-cli schedule'
 
 ############################# END ALIAS #############################
 
