@@ -225,9 +225,10 @@ alias deb='sudo dpkg -i'
 alias in='sudo apt-get install'
 alias up='sudo apt-get update'
 alias ug='sudo apt-get upgrade'
-alias du='sudo apt-get dist-upgrade'
+alias dup='sudo apt-get dist-upgrade'
 alias ar='sudo apt-get autoremove'
 alias search='apt-cache search'
+alias flatup='flatpak update'
 
 # Pass in OP token after sign-in
 alias qop='eval $(op signin my) --output=raw'
@@ -326,3 +327,4 @@ shopt -s extglob
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+. "$HOME/.cargo/env"
