@@ -36,9 +36,22 @@
     let g:vim_markdown_folding_disabled = 1
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_no_extensions_in_markdown = 1
-    let g:mkdp_refresh_slow = 1
-    let g:mkdp_markdown_css = '/home/borfus'
-    nmap M :MarkdownPreview<CR>
+    let g:mkdp_browser = 'firefox'
+    let g:mkdp_refresh_slow = 0
+    let g:mkdp_markdown_css = '/home/borfus/github-markdown.css'
+    let g:mkdp_preview_options = {
+        \ 'mkit': {},
+        \ 'katex': {},
+        \ 'uml': {},
+        \ 'maid': {},
+        \ 'disable_sync_scroll': 0,
+        \ 'sync_scroll_type': 'middle',
+        \ 'hide_yaml_meta': 1,
+        \ 'sequence_diagrams': {},
+        \ 'flowchart_diagrams': {},
+        \ 'content_editable': v:false
+        \ }
+    nmap M <Plug>MarkdownPreview
 
     " Commentary plugin binds
     nmap <C-c> gcc
@@ -47,6 +60,10 @@
     " Enable CSyntaxAfter syntax highlighting
     autocmd! FileType c,cpp,java,php call CSyntaxAfter()
 
+    " Rusty-tags Configuration
+    autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/,$RUST_SRC_PATH/rusty-tags.vi
+    autocmd BufWritePost *.rs :silent! exec "!rusty-tags vi --quiet --start-dir=" . expand('%:p:h') . "&" | redraw!
+
 " COMMANDS:
 
     " shorthand to create tags file with ctags
@@ -54,8 +71,13 @@
     " g^] ambiguous tags
     " ^t jump back up the tag stack
     command! MakeTags !ctags -R --exclude='*.js' .
+    command! RustTags !rusty-tags vi
 
 " GENERAL:
+
+    " Disabled notification sounds on WSL
+    set visualbell
+    set t_vb=
 
     filetype plugin indent on
     " show existing tab with 4 spaces width

@@ -57,6 +57,10 @@
     " Enable CSyntaxAfter syntax highlighting
     autocmd! FileType c,cpp,java,php call CSyntaxAfter()
 
+    " Rusty-tags Configuration
+    autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/,$RUST_SRC_PATH/rusty-tags.vi
+    autocmd BufWritePost *.rs :silent! exec "!rusty-tags vi --quiet --start-dir=" . expand('%:p:h') . "&" | redraw!
+
 " COMMANDS:
 
     " shorthand to create tags file with ctags
@@ -64,6 +68,7 @@
     " g^] ambiguous tags
     " ^t jump back up the tag stack
     command! MakeTags !ctags -R --exclude='*.js' .
+    command! RustTags !rusty-tags vi
 
 " GENERAL:
 
