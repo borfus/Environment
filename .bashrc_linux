@@ -146,6 +146,10 @@ HISTFILESIZE=50000
 # Hide User/Group in shell
 PS1='\[\e[32m\][\w] \$ \[\e[0m\]'
 
+# Nvidia Shader Cache
+export __GL_SHADER_DISK_CACHE_PATH='/home/borfus/shader-cache'
+export __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1
+
 ############################## ALIAS ##############################
 
 # Quickly access .bash_profile
@@ -209,6 +213,8 @@ alias untar='tar xvf'
 # Alias because I'll eventually forget the name of this program
 alias img='geeqie'
 
+alias ports='sudo lsof -i -P -n | grep LISTEN'
+
 # Change diff to icdiff
 alias diff='icdiff -N'
 
@@ -260,6 +266,8 @@ alias enablewifi='sudo service network-manager start'
 # Shorthand for Python 3 and 2
 alias py='/usr/bin/python3'
 alias py2='/usr/bin/python'
+
+alias uuidgenlower='uuidgen | tr "[:upper:]" "[:lower:]"'
 
 # Protontricks alias for Steam
 alias protontricks-flat='flatpak run --command=protontricks com.valvesoftware.Steam --no-runtime'
@@ -318,13 +326,29 @@ rmpat() { find . -name "$1" -delete; }
 # Allow a port through firewall
 addport() { sudo ufw allow "$1"; }
 
+# Kill all processes using a specific port
+killport() { kill $(lsof -t -i :"$1"); }
+
+# Find a file by name
+findq() { sudo find . -name "$1" 2>/dev/null; }
+finda() { sudo find / -name "$1" 2>/dev/null; }
+
 # Extend regex
 shopt -s extglob
 
 # Git branch tab-completion
 [ -f ~/.git-completion.bash ] && . ~/.git-completion.bash
 
+############################ AUTO SETUP #############################
 
+# fzf setup
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+# Cargo setup
 . "$HOME/.cargo/env"
+
+# nvm setup
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
