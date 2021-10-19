@@ -12,11 +12,16 @@ for_window [title="win7"] floating enable; border none
 for_window [class="krunner"] floating enable; border none
 for_window [class="Kmix"] floating enable; border none
 for_window [class="Klipper"] floating enable; border none
+for_window [title="Friends List"] floating enable; border none
 for_window [class="Plasmoidviewer"] floating enable; border none
 for_window [class="(?i)*nextcloud*"] floating disable
-for_window [class="plasmashell" window_type="notification"] floating enable, border none, move right 700px, move down 450px
-for_window [title='FSearch'] floating enable; boarder none
+for_window [class="plasmashell" window_type="notification"] floating enable, border none, move right 750px, move down 460px
+for_window [title='FSearch'] floating enable; border none
+for_window [title='SimpleScreenRecorder'] floating enable; border none
 no_focus [class="plasmashell" window_type="notification"] 
+
+# Auto start compton with custom .conf file
+exec --no-startup-id compton --config ~/.config/compton.conf -b
 
 # Desktop wallpaper
 exec_always feh --bg-fill ~/Pictures/library\ wall.jpg
@@ -96,10 +101,10 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym Shift+Control+h split h
+bindsym $mod+Shift+control+h split h
 
 # split in vertical orientation
-bindsym Shift+Control+v split v
+bindsym $mod+Shift+control+v split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
