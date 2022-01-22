@@ -153,19 +153,19 @@ export __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1
 ############################## ALIAS ##############################
 
 # Quickly access .bash_profile
-alias vibash='vim ~/.bashrc && source ~/.bashrc'
+alias vibash='nvim ~/.bashrc && source ~/.bashrc'
 
 # Open i3 config
-alias i3conf='vim ~/.config/i3/config'
+alias i3conf='nvim ~/.config/i3/config'
 
 # Open notes.txt file quickly
-alias vinotes='vim ~/notes.txt'
+alias vinotes='nvim ~/notes.txt'
 
 # Quickly access .vimrc
-alias vimrc='vim ~/.vimrc'
+alias vimrc='nvim ~/.vimrc'
 
 # Quickly access .inputrc
-alias vimput='vim ~/.inputrc'
+alias vimput='nvim ~/.inputrc'
 
 # Color search with grep
 alias grip='grep -rn --color=always --ignore-case'
@@ -291,7 +291,7 @@ alias biosupdate='system76-firmware-cli schedule'
 ############################## SCRIPTS ##############################
 
 # Use fzf to open files
-ff() { du -a ~ /DevProjects | awk '{print $2}' | fzf | xargs -r vim; }
+ff() { du -a ~ /DevProjects | awk '{print $2}' | fzf | xargs -r nvim; }
 
 # mcd: Makes new Dir and jumps inside
 mcd() { mkdir -p "$1" && cd "$1"; }
