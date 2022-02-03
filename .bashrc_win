@@ -117,13 +117,13 @@ export LS_COLORS
 ############################## PATH ##############################
 
 # x server display
-export DISPLAY=:0
+export DISPLAY=localhost:0.0
 
 # Allegro5 path
 PATH=$PATH:/mnt/c/allegro/include/
 
 # Script path
-PATH=$PATH:/scripts
+PATH=$PATH:~/scripts
 
 # Remove duplicate paths from $PATH
 PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
@@ -131,6 +131,8 @@ PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH})
 ############################# ENV VARS ############################
 
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+
+export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/library/
 
 ############################## SHELL ##############################
 
@@ -152,16 +154,16 @@ PS1='\[\e[32m\][\w] \$ \[\e[0m\]'
 ############################## ALIAS ##############################
 
 # Quickly access .bash_profile
-alias vibash='vim ~/.bashrc && source ~/.bashrc'
+alias vibash='nvim ~/.bashrc && source ~/.bashrc'
 
 # Open notes.txt file quickly
-alias vinotes='vim ~/notes.txt'
+alias vinotes='nvim ~/notes.txt'
 
 # Quickly access .vimrc
-alias vimrc='vim ~/.vimrc'
+alias vimrc='nvim ~/.vimrc'
 
 # Quickly access .inputrc
-alias vimput='vim ~/.inputrc'
+alias vimput='nvim ~/.inputrc'
 
 # Color search with grep
 alias grip='grep -rn --color=always --ignore-case'
@@ -170,8 +172,8 @@ alias grip='grep -rn --color=always --ignore-case'
 alias javagrip='grep -rn --color=always --ignore-case --include=\*.java'
 
 # Easy file finding
-alias qfind='sudo find . -iname'
-alias afind='sudo find / -iname'
+alias qfind='sudo find . -name'
+alias afind='sudo find / -name'
 
 # Quick list 
 alias la='ls -a'
@@ -211,13 +213,19 @@ alias deb='sudo dpkg -i'
 alias up='sudo apt-get update'
 alias ug='sudo apt-get upgrade'
 alias in='sudo apt-get install'
-alias du='sudo apt-get dist-upgrade'
+alias dup='sudo apt-get dist-upgrade'
 alias ar='sudo apt-get autoremove'
 alias search='apt-cache search'
 
 # Quickly ssh into raspberry pi
-alias rasp='ssh pi@192.168.0.89'
-alias raspsftp='sftp pi@192.168.0.89'
+alias rasp='ssh pi@192.168.1.89'
+alias raspsftp='sftp pi@192.168.1.89'
+
+# Quickly ssh into Digital Ocean droplet
+alias drop='ssh borfus@67.205.133.183'
+alias droproot='ssh root@67.205.133.183'
+alias dropsftp='sftp borfus@67.205.133.183'
+alias dropsftproot='sftp root@67.205.133.183'
 
 # Start nginx
 alias streamserver='sudo /usr/local/nginx/sbin/nginx'
@@ -236,7 +244,7 @@ alias py2='/usr/bin/python'
 ############################## SCRIPTS ##############################
 
 # Use fzf to open files
-ff() { du -a ~ /DevProjects /mnt/c/Users/borfus | awk '{print $2}' | fzf | xargs -r vim; }
+ff() { du -a ~ /DevProjects /mnt/c/Users/borfus | awk '{print $2}' | fzf | xargs -r nvim; }
 
 # mcd: Makes new Dir and jumps inside
 mcd() { mkdir -p "$1" && cd "$1"; }
@@ -266,3 +274,11 @@ shopt -s extglob
 [ -f ~/.git-completion.bash ] && . ~/.git-completion.bash
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# W10 linux WSL OpenGL compat
+export LIBGL_ALWAYS_INDIRECT=1
+. "$HOME/.cargo/env"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
