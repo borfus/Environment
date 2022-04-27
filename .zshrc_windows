@@ -21,16 +21,13 @@ PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH})
 export LIBGL_ALWAYS_INDIRECT=1
 . "$HOME/.cargo/env"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-############################# ENV VARS ############################
+# ############################# ENV VARS ############################
 
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/library/
+# find first part with 'echo $(rustc --print sysroot)'
+export RUST_SRC_PATH=/home/borfus/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/
 
 ############################## SHELL ##############################
 
@@ -144,8 +141,6 @@ alias untar='tar xvf'
 alias py='/usr/bin/python3'
 alias py2='/usr/bin/python'
 
-############################# END ALIAS #############################
-
 ############################## SCRIPTS ##############################
 
 # Use fzf to open files
@@ -171,6 +166,19 @@ prep() { echo "$2" | cat - $1 > temp && mv temp $1; }
 
 # Download video from network request link m3u8
 downvid() { ffmpeg -i "$1" -c copy -bsf:a aac_adtstoasc "output.mp4"; }
+
+# Load nvm on command to prevent it from loading on startup
+loadnvm() {
+    NVM_DIR="$HOME/.nvm";
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion";  # This loads nvm bash_completion
+}
+
+nvm() {
+    unfunction nvm
+    loadnvm
+    nvm "$@"
+}
 
 # Git branch tab-completion
 autoload -Uz compinit && compinit
