@@ -1,0 +1,178 @@
+############################## COLOR ##############################
+
+LS_COLORS='ow=01;36;40'
+export LS_COLORS
+ 
+############################## PATH ##############################
+
+# x server display
+export DISPLAY=localhost:0.0
+
+# Allegro5 path
+PATH=$PATH:/mnt/c/allegro/include/
+
+# Script path
+PATH=$PATH:~/scripts
+
+# Remove duplicate paths from $PATH
+PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
+
+# W10 linux WSL OpenGL compat
+export LIBGL_ALWAYS_INDIRECT=1
+. "$HOME/.cargo/env"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+############################# ENV VARS ############################
+
+export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/library/
+
+############################## SHELL ##############################
+
+# History timestamp
+export HISTTIMEFORMAT="%d/%m/%y %T "
+
+# Add color to ls command
+export CLICOLOR=1
+
+# Enable console coloring
+force_color_prompt=yes
+
+# Total history line storage - default 2000
+HISTFILESIZE=50000
+
+# Hide User/Group in shell
+PS1='%F{green}[%~] $%f '
+
+# Case-insensitive tab completion
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+
+############################## ALIAS ##############################
+
+# Quickly access .zshrc
+alias vibash='nvim ~/.zshrc && source ~/.zshrc'
+
+# Open notes.txt file quickly
+alias vinotes='nvim ~/notes.txt'
+
+# Quickly access .vimrc
+alias vimrc='nvim ~/.vimrc'
+
+# Quickly access .inputrc
+alias vimput='nvim ~/.inputrc'
+
+# Vim shorthand to nvim because I keep forgetting to type nvim instead of vim
+alias vim='nvim'
+
+# Color search with grep
+alias grip='grep -rn --color=always --ignore-case'
+
+# Color search with grep
+alias javagrip='grep -rn --color=always --ignore-case --include=\*.java'
+
+# Easy file finding
+alias qfind='sudo find . -name'
+alias afind='sudo find / -name'
+
+# Quick list 
+alias ls='ls --color=auto'
+alias la='ls --color=auto -a'
+alias ll='ls --color=auto -lathr'
+
+# Easy Navigation for zsh
+alias ..='cd ../'                       # Go back 1 directory level
+alias .2='cd ../../'                    # Go back 2 directory levels
+alias .3='cd ../../../'                 # Go back 3 directory levels
+alias .4='cd ../../../../'              # Go back 4 directory levels
+alias .5='cd ../../../../../'           # Go back 5 directory levels
+alias .6='cd ../../../../../../'        # Go back 6 directory levels
+alias f='explorer.exe .'                # f: Opens current directory in finder
+alias ~="cd ~"                          # ~: Go Home
+alias c='clear'                         # c: Clear terminal display
+
+# Linux on Windows specific
+alias cdc='cd /mnt/c'                   # cdc: go to C drive
+alias borf='cd /mnt/c/Users/borfus/'    # borf: go to borfus user folder
+alias desk='cd /mnt/c/Users/borfus/Desktop'
+alias down='cd /mnt/c/Users/borfus/Downloads'
+alias dp="cd /mnt/c/DevProjects/"
+
+# Change diff to icdiff
+alias diff='icdiff -N'
+
+# Copy input to clipboard
+alias pbcopy="clip"
+
+# Quickly clear trash bin
+alias rmtrash='rm -rf ~/.local/share/Trash/*'
+
+# Quickly install .deb file
+alias deb='sudo dpkg -i'
+
+# Quickly update/upgrade
+alias up='sudo apt-get update'
+alias ug='sudo apt-get upgrade'
+alias in='sudo apt-get install'
+alias dup='sudo apt-get dist-upgrade'
+alias ar='sudo apt-get autoremove'
+alias search='apt-cache search'
+
+# Quickly ssh into raspberry pi
+alias rasp='ssh pi@192.168.1.89'
+alias raspsftp='sftp pi@192.168.1.89'
+
+# Quickly ssh into Digital Ocean droplet
+alias drop='ssh borfus@67.205.133.183'
+alias droproot='ssh root@67.205.133.183'
+alias dropsftp='sftp borfus@67.205.133.183'
+alias dropsftproot='sftp root@67.205.133.183'
+
+# Start nginx
+alias streamserver='sudo /usr/local/nginx/sbin/nginx'
+
+# Quickly extract tar.gz files
+alias untar='tar xvf'
+
+## Python ##
+
+# Shorthand for Python 3 and 2
+alias py='/usr/bin/python3'
+alias py2='/usr/bin/python'
+
+############################# END ALIAS #############################
+
+############################## SCRIPTS ##############################
+
+# Use fzf to open files
+ff() { du -a ~ /DevProjects /mnt/c/Users/borfus | awk '{print $2}' | fzf | xargs -r nvim; }
+
+# mcd: Makes new Dir and jumps inside
+mcd() { mkdir -p "$1" && cd "$1"; }
+
+# mvnotes: Move the notes.txt file to the notes folder with a new name
+mvnotes() { mv ~/notes.txt ~/notes/$1; }
+
+# Call `fzip foldername` to zip a folder
+fzip() { zip -r $1{.zip,}; }
+
+# Search and replace strings in files recursively
+sr() { find . -type f -exec sed -i -e 's/'"$1"/"$2"'/g' {} \;; }
+
+# Search and replace filenames recursively
+srf() { find . -depth -name \*"$1"\* -execdir zsh -c 'mv -i "$1" "${1//'"$1"/"$2"'}"' zsh {} \;; }
+
+# Prepend text to file
+prep() { echo "$2" | cat - $1 > temp && mv temp $1; }
+
+# Download video from network request link m3u8
+downvid() { ffmpeg -i "$1" -c copy -bsf:a aac_adtstoasc "output.mp4"; }
+
+# Git branch tab-completion
+autoload -Uz compinit && compinit
+
+
