@@ -46,6 +46,7 @@
                 "backgroundImage": "C:\\Users\\borfus\\Pictures\\icon.png",
                 "backgroundImageAlignment": "bottomRight",
                 "backgroundImageStretchMode": "none",
+                "bellStyle": "none",
                 "colorScheme": "Brown",
                 "cursorColor": "#FFFFFF",
                 "cursorShape": "emptyBox",
