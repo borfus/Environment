@@ -8,11 +8,11 @@ PATH=$PATH:/usr/lib/jvm/java-8-openjdk-amd64/bin
 PATH=$PATH:~/scripts
 PATH=$PATH:/home/borfus/.local/bin
 
-# Remove duplicate paths from $PATH
-PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
-
 # 010 Editor 
 PATH=$PATH:/home/borfus/010editor;export PATH; # ADDED BY INSTALLER - DO NOT EDIT OR DELETE THIS COMMENT - 87FF8EFC-483D-BCAA-D67D-735CF60410D1 DEB385BD-25BD-6270-356F-72EFDB692649
+
+# Remove duplicate paths from $PATH
+typeset -U path PATH
 
 ############################# ENV VARS ############################
 
@@ -23,10 +23,8 @@ export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 # Cargo setup
 . "$HOME/.cargo/env"
 
-# nvm setup
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# find first part with 'echo $(rustc --print sysroot)'
+export RUST_SRC_PATH=/home/borfus/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/
 
 ############################## SHELL ##############################
 
@@ -243,4 +241,17 @@ finda() { sudo find / -name "$1" 2>/dev/null; }
 
 # Download video from network request link m3u8
 downvid() { ffmpeg -i "$1" -c copy -bsf:a aac_adtstoasc "output.mp4"; }
+
+# Load nvm on command to prevent it from loading on startup
+loadnvm() {
+    NVM_DIR="$HOME/.nvm";
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion";  # This loads nvm bash_completion
+}
+
+nvm() {
+    unfunction nvm
+    loadnvm
+    nvm "$@"
+}
 
