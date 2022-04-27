@@ -15,7 +15,7 @@ PATH=$PATH:/mnt/c/allegro/include/
 PATH=$PATH:~/scripts
 
 # Remove duplicate paths from $PATH
-PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
+typeset -U path PATH
 
 # W10 linux WSL OpenGL compat
 export LIBGL_ALWAYS_INDIRECT=1
