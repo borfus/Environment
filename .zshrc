@@ -67,6 +67,9 @@ alias vinotes='nvim ~/notes.txt'
 # Quickly access .vimrc
 alias vimrc='nvim ~/.vimrc'
 
+# Load vim without plugins
+alias vimnone='nvim -u NONE'
+
 # Quickly access .inputrc
 alias vimput='nvim ~/.inputrc'
 
