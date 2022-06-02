@@ -192,7 +192,7 @@
     nnoremap <silent> <Space> :nohl<CR><C-l>
 
     " Select all text
-    nnoremap <C-a> ggvG$
+    nnoremap <C-a> gg0vG$
 
     " Jump 20 lines
     nnoremap <C-j> 20j
