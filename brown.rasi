@@ -1,0 +1,89 @@
+configuration {
+  drun {
+    display-name: "";
+  }
+
+  run {
+    display-name: "";
+  }
+
+  window {
+    display-name: "";
+  }
+
+  timeout {
+    delay: 10;
+    action: "kb-cancel";
+  }
+}
+
+* {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  spacing: 0;
+
+  bg: #282a36;
+  fg: #f8f8f2;
+  blue: #6272a4;
+  purple: #bd93f9;
+
+  background-color: @bg;
+  text-color: @fg;
+}
+
+* {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  spacing: 0;
+
+  bg: #261b0e;
+  bg-alt: #261b0e;
+  fg: #e2cdb0;
+  fg-alt: #7d6138;
+
+  background-color: @bg;
+  text-color: @fg;
+}
+
+window {
+  transparency: "real";
+}
+
+mainbox {
+  children: [inputbar, listview];
+}
+
+inputbar {
+  children: [prompt, entry];
+}
+
+entry {
+  padding: 12px 0;
+}
+
+prompt {
+  padding: 12px;
+}
+
+listview {
+  lines: 8;
+}
+
+element {
+  children: [element-icon, element-text];
+}
+
+element-icon {
+  padding: 10px 10px;
+}
+
+element-text {
+  padding: 12px;
+  text-color: @fg-alt;
+}
+
+element-text selected {
+  text-color: @fg;
+}
