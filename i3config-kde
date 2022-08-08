@@ -60,10 +60,10 @@ floating_modifier $mod
 
 # start a terminal
 #bindsym $mod+Return exec i3-sensible-terminal
-bindsym Control+Mod1+w exec konsole
+bindsym Shift+Control+Mod1+w exec konsole
 
 # launch fsearch
-bindsym Control+Mod1+s exec fsearch 
+bindsym Shift+Control+Mod1+s exec fsearch 
 
 # kill focused window
 bindsym $mod+Shift+q kill
