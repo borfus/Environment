@@ -68,6 +68,7 @@ alias vimput='nvim ~/.inputrc'
 
 # Vim shorthand to nvim because I keep forgetting to type nvim instead of vim
 alias vim='nvim'
+alias ovim='/usr/bin/vim'
 
 # Color search with grep
 alias grip='grep -rn --color=always --ignore-case'
