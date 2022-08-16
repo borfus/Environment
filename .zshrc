@@ -56,26 +56,26 @@ export __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1
 ############################## ALIAS ##############################
 
 # Quickly access .zshrc
-alias vibash='nvm && nvim ~/.zshrc && source ~/.zshrc'
+alias vibash='nvm -v && nvim ~/.zshrc && source ~/.zshrc'
 
 # Open i3 config
-alias i3conf='nvm && nvim ~/.config/i3/config'
+alias i3conf='nvm -v && nvim ~/.config/i3/config'
 
 # Open notes.txt file quickly
-alias vinotes='nvm && nvim ~/notes.txt'
+alias vinotes='nvm -v && nvim ~/notes.txt'
 
 # Quickly access .vimrc
-alias vimrc='nvm && nvim ~/.vimrc'
+alias vimrc='nvm -v && nvim ~/.vimrc'
 
 # Load vim without plugins
-alias vimnone='nvm && nvim -u NONE'
+alias vimnone='nvm -v && nvim -u NONE'
 
 # Quickly access .inputrc
-alias vimput='nvm && nvim ~/.inputrc'
+alias vimput='nvm -v && nvim ~/.inputrc'
 
 # Alias to change vim to run nvim since I'm too used to typing vim
-alias vim='nvm && nvim'
-alias ovim='nvm && /usr/bin/vim'
+alias vim='nvm -v && nvim'
+alias ovim='nvm -v && /usr/bin/vim'
 
 # Color search with grep
 alias grip='grep -rn --color=always --ignore-case'
