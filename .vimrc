@@ -35,7 +35,7 @@
     let g:vim_markdown_no_extensions_in_markdown = 1
     let g:mkdp_browser = 'firefox'
     let g:mkdp_refresh_slow = 0
-    let g:mkdp_markdown_css = '/Users/pbell/github-markdown.css'
+    let g:mkdp_markdown_css = '/home/borfus/github-markdown.css'
     let g:mkdp_preview_options = {
         \ 'mkit': {},
         \ 'katex': {},
