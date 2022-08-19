@@ -197,7 +197,7 @@
     nnoremap ,dw :g/^$/d<CR>
 
     " <Ctrl-l> redraws the screen and removes any search highlighting.
-    nnoremap <silent> <Space> :nohl<CR><C-l>
+    nnoremap <silent> <C-Space> :nohl<CR><C-l>
 
     " Select all text
     nnoremap <C-a> gg0vG$
