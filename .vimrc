@@ -87,6 +87,8 @@
     " Enables relative, hybrid line numbers
     set number relativenumber
     set nu rnu
+    " Mark the 120th column
+    set colorcolumn=120
 
     " Highlight all search matches
     set hlsearch
