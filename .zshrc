@@ -147,6 +147,7 @@ alias ar='sudo apt-get autoremove'
 alias search='apt-cache search'
 alias flatup='flatpak update'
 alias flatclean='flatpak uninstall --unused'
+alias fullup='sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove -y && flatpak update -y && rustup update'
 
 # Pass in OP token after sign-in
 alias qop='eval $(op signin my) --output=raw'
