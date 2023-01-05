@@ -2,6 +2,8 @@
 
 LS_COLORS='ow=01;36;40'
 export LS_COLORS
+
+export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
  
 ############################## PATH ##############################
 
@@ -20,6 +22,16 @@ typeset -U path PATH
 # W10 linux WSL OpenGL compat
 export LIBGL_ALWAYS_INDIRECT=1
 . "$HOME/.cargo/env"
+
+# Golang
+PATH=$PATH:/usr/local/go/bin
+export GO111MODULE=on
+
+# Mosint
+PATH=$PATH:/usr/local/go/src/mosint
+
+# Discord Test Bot
+source ~/.DISCORD_TEST
 
 # ############################# ENV VARS ############################
 
@@ -122,6 +134,7 @@ alias in='sudo apt-get install'
 alias dup='sudo apt-get dist-upgrade'
 alias ar='sudo apt-get autoremove'
 alias search='apt-cache search'
+alias fullup='sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove -y && rustup update'
 
 # Quickly ssh into raspberry pi
 alias rasp='ssh pi@192.168.1.89'
