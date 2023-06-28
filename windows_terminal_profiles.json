@@ -3,24 +3,28 @@
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "actions": [],
     "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
+    "newTabMenu": 
+    [
+        {
+            "type": "remainingProfiles"
+        }
+    ],
     "profiles": 
     {
-        "defaults": 
-        {
-            "colorScheme": "Brown"
-        },
+        "defaults": {},
         "list": 
         [
             {
                 "backgroundImage": "C:\\Users\\borfus\\Pictures\\icon.png",
                 "backgroundImageAlignment": "bottomRight",
                 "backgroundImageStretchMode": "none",
+                "colorScheme": "brownColor",
                 "cursorColor": "#FFFFFF",
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Consolas",
-                    "size": 12
+                    "face": "Inconsolata",
+                    "size": 14.0
                 },
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
                 "hidden": false,
@@ -30,13 +34,14 @@
                 "backgroundImage": "C:\\Users\\borfus\\Pictures\\icon.png",
                 "backgroundImageAlignment": "bottomRight",
                 "backgroundImageStretchMode": "none",
+                "colorScheme": "brownColor",
                 "commandline": "cmd.exe /K vsdevcmd",
                 "cursorColor": "#FFFFFF",
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Consolas",
-                    "size": 12
+                    "face": "Inconsolata",
+                    "size": 14.0
                 },
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
                 "hidden": false,
@@ -46,14 +51,13 @@
                 "backgroundImage": "C:\\Users\\borfus\\Pictures\\icon.png",
                 "backgroundImageAlignment": "bottomRight",
                 "backgroundImageStretchMode": "none",
-                "bellStyle": "none",
-                "colorScheme": "Brown",
+                "colorScheme": "brownColor",
                 "cursorColor": "#FFFFFF",
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Consolas",
-                    "size": 12
+                    "face": "Inconsolata",
+                    "size": 14.0
                 },
                 "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
                 "hidden": false,
@@ -65,12 +69,13 @@
                 "backgroundImage": "C:\\Users\\borfus\\Pictures\\icon.png",
                 "backgroundImageAlignment": "bottomRight",
                 "backgroundImageStretchMode": "none",
+                "colorScheme": "brownColor",
                 "cursorColor": "#FFFFFF",
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Consolas",
-                    "size": 12
+                    "face": "Inconsolata",
+                    "size": 14.0
                 },
                 "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
                 "hidden": false,
@@ -81,13 +86,14 @@
                 "backgroundImage": "C:\\Users\\borfus\\Pictures\\icon.png",
                 "backgroundImageAlignment": "bottomRight",
                 "backgroundImageStretchMode": "none",
+                "colorScheme": "brownColor",
                 "commandline": "C:\\cygwin64\\bin\\bash.exe",
                 "cursorColor": "#FFFFFF",
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Consolas",
-                    "size": 12
+                    "face": "Inconsolata",
+                    "size": 14.0
                 },
                 "guid": "{07ece1cb-ff14-4179-a738-1781081fd8be}",
                 "hidden": false,
@@ -96,24 +102,28 @@
                 "startingDirectory": "C:\\Users\\borfus"
             },
             {
+                "colorScheme": "brownColor",
                 "guid": "{90622159-af9c-5723-acd8-8c8bbc57b616}",
                 "hidden": false,
                 "name": "Developer Command Prompt for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"
             },
             {
+                "colorScheme": "brownColor",
                 "guid": "{f702540b-fbd2-56dd-b240-1626354699fc}",
                 "hidden": false,
                 "name": "Developer PowerShell for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"
             },
             {
+                "colorScheme": "brownColor",
                 "guid": "{82c3d0a7-2449-5e56-a03f-40b063378ced}",
                 "hidden": true,
                 "name": "Developer Command Prompt for VS 2019",
                 "source": "Windows.Terminal.VisualStudio"
             },
             {
+                "colorScheme": "brownColor",
                 "guid": "{7404a5cd-68aa-5054-9e23-67f096662920}",
                 "hidden": true,
                 "name": "Developer PowerShell for VS 2019",
@@ -123,29 +133,6 @@
     },
     "schemes": 
     [
-        {
-            "background": "#261B0E",
-            "black": "#3D3D3D",
-            "blue": "#E2CDB0",
-            "brightBlack": "#ECF0F1",
-            "brightBlue": "#8B6E46",
-            "brightCyan": "#FFC66D",
-            "brightGreen": "#E2CDB0",
-            "brightPurple": "#B4009E",
-            "brightRed": "#8B6E46",
-            "brightWhite": "#FFFFFF",
-            "brightYellow": "#7E705A",
-            "cursorColor": "#FFFFFF",
-            "cyan": "#FFC66D",
-            "foreground": "#FFFFFF",
-            "green": "#E2CDB0",
-            "name": "Brown",
-            "purple": "#881798",
-            "red": "#F7A21B",
-            "selectionBackground": "#FFFFFF",
-            "white": "#BDC3C7",
-            "yellow": "#7D6138"
-        },
         {
             "background": "#0C0C0C",
             "black": "#0C0C0C",
@@ -236,7 +223,7 @@
             "red": "#E45649",
             "selectionBackground": "#FFFFFF",
             "white": "#FAFAFA",
-            "yellow": "#C18301"
+            "yellow": "#C14.01"
         },
         {
             "background": "#002B36",
@@ -352,6 +339,74 @@
             "selectionBackground": "#FFFFFF",
             "white": "#C0C0C0",
             "yellow": "#808000"
+        },
+        {
+            "background": "#261B0E",
+            "black": "#3D3D3D",
+            "blue": "#E2CDB0",
+            "brightBlack": "#ECF0F1",
+            "brightBlue": "#8B6E46",
+            "brightCyan": "#FFC66D",
+            "brightGreen": "#E2CDB0",
+            "brightPurple": "#53388B",
+            "brightRed": "#8B6E46",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#7E705A",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#FFC66D",
+            "foreground": "#FFFFFF",
+            "green": "#E2CDB0",
+            "name": "brownColor",
+            "purple": "#07A21B",
+            "red": "#F7A21B",
+            "selectionBackground": "#FFFFFF",
+            "white": "#BDC3C7",
+            "yellow": "#7D6138"
+        }
+    ],
+    "themes": 
+    [
+        {
+            "name": "legacyDark",
+            "tab": 
+            {
+                "background": null,
+                "showCloseButton": "always",
+                "unfocusedBackground": null
+            },
+            "window": 
+            {
+                "applicationTheme": "dark",
+                "useMica": false
+            }
+        },
+        {
+            "name": "legacyLight",
+            "tab": 
+            {
+                "background": null,
+                "showCloseButton": "always",
+                "unfocusedBackground": null
+            },
+            "window": 
+            {
+                "applicationTheme": "light",
+                "useMica": false
+            }
+        },
+        {
+            "name": "legacySystem",
+            "tab": 
+            {
+                "background": null,
+                "showCloseButton": "always",
+                "unfocusedBackground": null
+            },
+            "window": 
+            {
+                "applicationTheme": "system",
+                "useMica": false
+            }
         }
     ]
 }
