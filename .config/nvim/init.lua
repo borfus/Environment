@@ -245,7 +245,7 @@ vim.o.timeoutlen = 300
 vim.o.completeopt = 'menuone,noselect'
 
 -- Add a column at x chars
-vim.o.colorcolumn = 120
+vim.o.colorcolumn = '120'
 
 -- Set the signcolumn highlight to none
 vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'none' })
