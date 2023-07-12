@@ -49,6 +49,12 @@ require('lazy').setup({
     },
   },
 
+  -- Java crap
+  'mfussenegger/nvim-jdtls',
+
+  -- Linter for things not covered by Mason
+  'mfussenegger/nvim-lint',
+
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -145,7 +151,8 @@ require('lazy').setup({
   {
     'nvim-focus/focus.nvim',
     opts = {
-      cursorline = false
+      cursorline = false,
+      signcolumn = false
     }
   },
 
@@ -180,7 +187,7 @@ require('lazy').setup({
       }
     },
 
-    vim.keymap.set('n', '<C-n>', ':NeoTreeShowToggle<CR>', { silent = true }),
+    vim.keymap.set('n', '<C-n>', ':NeoTreeFocusToggle<CR>', { silent = true }),
     vim.keymap.set('n', '<C-m>', ':NeoTreeRevealToggle<CR>', { silent = true }),
     vim.keymap.set('n', '<C-g>', ':Neotree float git_status<CR>', { silent = true }) -- 'Neotree' must have a lowercase 't'
   },
@@ -233,9 +240,6 @@ vim.o.undofile = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
--- Keep signcolumn on by default
-vim.wo.signcolumn = 'yes'
-
 -- Decrease update time
 vim.o.updatetime = 250
 vim.o.timeout = true
@@ -246,6 +250,9 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- Add a column at x chars
 vim.o.colorcolumn = '120'
+
+-- Keep signcolumn on by default
+vim.wo.signcolumn = 'yes'
 
 -- Set the signcolumn highlight to none
 vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'none' })
