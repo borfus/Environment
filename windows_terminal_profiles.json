@@ -2,7 +2,7 @@
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "actions": [],
-    "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
+    "defaultProfile": "{d7b20cea-47a9-518c-95a4-c8bd91e2e1c6}",
     "newTabMenu": 
     [
         {
@@ -23,7 +23,7 @@
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Inconsolata",
+                    "face": "Inconsolata Nerd Font",
                     "size": 14.0
                 },
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
@@ -40,7 +40,7 @@
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Inconsolata",
+                    "face": "Inconsolata Nerd Font",
                     "size": 14.0
                 },
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
@@ -56,7 +56,7 @@
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Inconsolata",
+                    "face": "Inconsolata Nerd Font",
                     "size": 14.0
                 },
                 "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
@@ -74,7 +74,7 @@
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Inconsolata",
+                    "face": "Inconsolata Nerd Font",
                     "size": 14.0
                 },
                 "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
@@ -92,7 +92,7 @@
                 "cursorShape": "emptyBox",
                 "font": 
                 {
-                    "face": "Inconsolata",
+                    "face": "Inconsolata Nerd Font",
                     "size": 14.0
                 },
                 "guid": "{07ece1cb-ff14-4179-a738-1781081fd8be}",
@@ -128,6 +128,29 @@
                 "hidden": true,
                 "name": "Developer PowerShell for VS 2019",
                 "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "backgroundImage": "C:\\Users\\borfus\\Pictures\\icon.png",
+                "backgroundImageAlignment": "bottomRight",
+                "backgroundImageStretchMode": "none",
+                "colorScheme": "brownColor",
+                "cursorColor": "#FFFFFF",
+                "cursorShape": "emptyBox",
+                "font": 
+                {
+                    "face": "Inconsolata Nerd Font",
+                    "size": 14.0
+                },
+                "guid": "{d7b20cea-47a9-518c-95a4-c8bd91e2e1c6}",
+                "hidden": false,
+                "name": "Ubuntu 22.04.2 LTS",
+                "source": "CanonicalGroupLimited.Ubuntu22.04LTS_79rhkp1fndgsc"
+            },
+            {
+                "guid": "{17bf3de4-5353-5709-bcf9-835bd952a95e}",
+                "hidden": true,
+                "name": "Ubuntu-22.04",
+                "source": "Windows.Terminal.Wsl"
             }
         ]
     },
@@ -316,6 +339,29 @@
             "selectionBackground": "#FFFFFF",
             "white": "#D3D7CF",
             "yellow": "#C4A000"
+        },
+        {
+            "background": "#300A24",
+            "black": "#171421",
+            "blue": "#0037DA",
+            "brightBlack": "#767676",
+            "brightBlue": "#08458F",
+            "brightCyan": "#2C9FB3",
+            "brightGreen": "#26A269",
+            "brightPurple": "#A347BA",
+            "brightRed": "#C01C28",
+            "brightWhite": "#F2F2F2",
+            "brightYellow": "#A2734C",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#3A96DD",
+            "foreground": "#FFFFFF",
+            "green": "#26A269",
+            "name": "Ubuntu-22.04-ColorScheme",
+            "purple": "#881798",
+            "red": "#C21A23",
+            "selectionBackground": "#FFFFFF",
+            "white": "#CCCCCC",
+            "yellow": "#A2734C"
         },
         {
             "background": "#000000",
