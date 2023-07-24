@@ -317,6 +317,9 @@ vim.keymap.set('n', '<leader>;{', 'i{<Enter>}<Esc>ko', {})
 vim.keymap.set('n', '<leader>;(', 'i(<Enter>)<Esc>ko', {})
 vim.keymap.set('n', '<leader>;[', 'i[<Enter>]<Esc>ko', {})
 
+-- Change current working directory to current file
+vim.keymap.set('n', '<leader>cd', ':cd %:h<CR>', { silent = true, desc = '[C]hange [D]irectory to Current File' })
+
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
