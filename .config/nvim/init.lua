@@ -501,7 +501,15 @@ end
 local servers = {
   clangd = {},
   rust_analyzer = {},
-  pylsp = {},
+  pylsp = {
+    pylsp = {
+      plugins = {
+        pycodestyle = {
+          maxLineLength = 120
+        }
+      }
+    }
+  },
   tsserver = {},
   jdtls = {},
   jsonls = {},

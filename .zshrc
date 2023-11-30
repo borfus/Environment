@@ -195,6 +195,7 @@ alias graphh='system76-power graphics hybrid'
 alias graphi='system76-power graphics integrated'
 alias refresh144='xrandr -r 144.00'
 alias refresh60='xrandr -r 60.00'
+alias checkcores='for ((i=1;i<12;i++)); do cat /sys/devices/system/cpu/cpu$i/online; done'
 alias power='system76-power profile'
 alias cputemp='watch -n 2 sensors'
 alias gputemp='watch -n 2 nvidia-smi'
@@ -263,3 +264,10 @@ nvm() {
     nvm "$@"
 }
 
+coreson() {
+    sudo zsh -c "for ((i = 2; i < 12; i++)); do echo 1 > /sys/devices/system/cpu/cpu\$i/online; done"
+}
+
+coresoff() {
+    sudo zsh -c "for ((i = 2; i < 12; i++)); do echo 0 > /sys/devices/system/cpu/cpu\$i/online; done"
+}
