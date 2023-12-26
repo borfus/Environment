@@ -265,6 +265,9 @@ vim.o.expandtab = true
 -- Automatically update changed files
 vim.o.autoread = true
 
+-- Color theme
+vim.opt.termguicolors = false;
+
 -- Disable automatic comments on new line
 vim.cmd('autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o')
 
