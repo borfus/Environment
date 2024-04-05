@@ -150,7 +150,7 @@ require('lazy').setup({
   -- Automatically resize focused splits
   {
     'nvim-focus/focus.nvim',
-    opts = {
+    ui = {
       cursorline = false,
       signcolumn = false
     }
