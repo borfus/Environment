@@ -513,7 +513,7 @@ local servers = {
       }
     }
   },
-  tsserver = {},
+  ts_ls = {},
   jdtls = {},
   jsonls = {},
   lemminx = {},
