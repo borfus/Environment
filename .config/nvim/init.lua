@@ -18,7 +18,8 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   }
 end
-vim.opt.rtp:prepend(lazypath)
+
+vim.opt.runtimepath:prepend(lazypath)
 
 -- Here is where we install plugins
 require('lazy').setup({
@@ -87,10 +88,13 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
+        local gitsigns = require('gitsigns')
+        vim.keymap.set('n', '<leader>gp', function() gitsigns.nav_hunk('prev') end,
           { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
-        vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
-        vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
+        vim.keymap.set('n', '<leader>gn', function() gitsigns.nav_hunk('next') end,
+          { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
+        vim.keymap.set('n', '<leader>ph', gitsigns.preview_hunk,
+          { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
     },
   },
@@ -197,6 +201,8 @@ require('lazy').setup({
     {
       'andrewferrier/wrapping.nvim',
       config = function()
+        -- luals thinks that setup() has required arguments, but it doesn't
+        ---@diagnostic disable-next-line
         require('wrapping').setup()
       end,
     },
@@ -371,7 +377,7 @@ vim.keymap.set('n', '<leader>sc', require('telescope.builtin').commands, { desc 
 vim.keymap.set('n', '<leader>sk', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps' })
 
 -- [[ Configure Treesitter ]]
--- See `:help nvim-treesitter`
+-- See `:help nvim-treesittern`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
   ensure_installed = {
@@ -391,7 +397,9 @@ require('nvim-treesitter.configs').setup {
 
   -- Autoinstall languages that are not installed.
   auto_install = true,
-
+  sync_install = false,
+  ignore_install = {},
+  modules = {},
   highlight = { enable = true },
   indent = { enable = true },
   incremental_selection = {
@@ -538,6 +546,7 @@ local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
+  automatic_installation = true
 }
 
 mason_lspconfig.setup_handlers {
