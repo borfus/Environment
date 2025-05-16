@@ -528,6 +528,9 @@ local servers = {
   yamlls = {},
   lua_ls = {
     Lua = {
+      diagnostics = {
+        globals = { 'vim' },
+      },
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
@@ -549,15 +552,14 @@ mason_lspconfig.setup {
   automatic_installation = true
 }
 
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-    }
-  end,
-}
+vim.lsp.config("*", {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+for name, opts in pairs(servers) do
+  vim.lsp.config(name, { settings = opts })
+end
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
