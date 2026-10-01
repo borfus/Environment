@@ -549,7 +549,9 @@ local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
-  automatic_installation = true
+  automatic_installation = true,
+  -- jdtls is started by nvim-jdtls (ftplugin/java.lua); don't let lspconfig start a second client.
+  automatic_enable = { exclude = { 'jdtls' } },
 }
 
 vim.lsp.config("*", {
@@ -560,6 +562,57 @@ vim.lsp.config("*", {
 for name, opts in pairs(servers) do
   vim.lsp.config(name, { settings = opts })
 end
+
+-- SQL Lint/Format
+local lint = require('lint')
+lint.linters_by_ft = {
+  groovy = { 'npm-groovy-lint' },
+  sql = { 'sqlfluff' },
+  plsql = { 'sqlfluff' },
+}
+lint.linters.sqlfluff.args = { 'lint', '--format=json', '--dialect=oracle', '-' }
+
+vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufWritePost' }, {
+  group = vim.api.nvim_create_augroup('nvim-lint', { clear = true }),
+  callback = function()
+    lint.try_lint()
+  end,
+})
+
+local function sqlfluff_format()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local input = table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n') .. '\n'
+  local result = vim.system({ 'sqlfluff', 'fix', '--dialect=oracle', '-' }, { stdin = input }):wait()
+  if result.code ~= 0 then
+    vim.notify('sqlfluff could not format:\n' .. result.stderr, vim.log.levels.WARN)
+    return
+  end
+  local view = vim.fn.winsaveview()
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(result.stdout, '\n', { trimempty = true }))
+  vim.fn.winrestview(view)
+end
+
+vim.api.nvim_create_user_command('SqlFormat', sqlfluff_format, { desc = 'Format SQL with sqlfluff' })
+
+local formatters_by_ft = {
+  sql = sqlfluff_format,
+  plsql = sqlfluff_format,
+}
+
+local function format_buffer()
+  local formatter = formatters_by_ft[vim.bo.filetype]
+  if formatter then
+    formatter()
+  elseif #vim.lsp.get_clients({ bufnr = 0, method = 'textDocument/formatting' }) > 0 then
+    vim.lsp.buf.format()
+  else
+    local view = vim.fn.winsaveview()
+    vim.cmd('normal! gg=G')
+    vim.fn.winrestview(view)
+  end
+end
+
+vim.keymap.set('n', '<leader>f', format_buffer, { desc = '[F]ormat buffer' })
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
