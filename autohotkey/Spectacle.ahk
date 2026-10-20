@@ -1,10 +1,9 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 #UseHook
-; Spectacle-style window management + Win+N virtual desktop switching.
-; Spectacle modifiers translated: control -> Ctrl (^), option -> Win (#), command -> Alt (!)
 
-DllCall("SetThreadDpiAwarenessContext", "ptr", -4, "ptr")  ; per-monitor DPI aware v2
+DPI_AWARENESS_PER_MONITOR_V2 := -4
+DllCall("SetThreadDpiAwarenessContext", "ptr", DPI_AWARENESS_PER_MONITOR_V2, "ptr")
 SetWinDelay -1
 A_IconTip := "Spectacle (AutoHotkey)"
 
@@ -32,8 +31,6 @@ A_IconTip := "Spectacle (AutoHotkey)"
 #3:: GoToDesktop(3)
 #4:: GoToDesktop(4)
 #5:: GoToDesktop(5)
-
-; ---------------------------------------------------------------- window actions
 
 global Last := {hwnd: 0, action: "", step: 0, rect: ""}
 global UndoStack := [], RedoStack := []
@@ -79,7 +76,6 @@ Center() {
     Apply(hwnd, {x: wa.x + (wa.w - w) // 2, y: wa.y + (wa.h - h) // 2, w: w, h: h}, "center")
 }
 
-; Cycles through left/center/right thirds (top/middle/bottom on portrait screens).
 Third(dir) {
     if !(hwnd := Target())
         return
@@ -111,7 +107,6 @@ Resize(dir) {
     Apply(hwnd, {x: l, y: t, w: r - l, h: b - t}, "resize")
 }
 
-; Moves the window to the previous/next monitor (ordered left to right), keeping its relative position and size.
 Display(dir) {
     if !(hwnd := Target())
         return
@@ -132,17 +127,16 @@ Display(dir) {
 Undo() {
     if !(hwnd := Target())
         return
-    Restore(hwnd, UndoStack, RedoStack)
+    RestoreFromHistory(hwnd, UndoStack, RedoStack)
 }
 
 Redo() {
     if !(hwnd := Target())
         return
-    Restore(hwnd, RedoStack, UndoStack)
+    RestoreFromHistory(hwnd, RedoStack, UndoStack)
 }
 
-; Pops the active window's most recent rect off `from`, saving its current rect onto `to`.
-Restore(hwnd, from, to) {
+RestoreFromHistory(hwnd, from, to) {
     global Last
     i := from.Length
     while i >= 1 {
@@ -157,16 +151,16 @@ Restore(hwnd, from, to) {
     }
 }
 
-; ---------------------------------------------------------------- helpers
-
 Target() {
     hwnd := WinExist("A")
     if !hwnd
         return 0
+    return IsShellWindow(hwnd) ? 0 : hwnd
+}
+
+IsShellWindow(hwnd) {
     cls := WinGetClass(hwnd)
-    if (cls = "Progman" || cls = "WorkerW" || cls = "Shell_TrayWnd" || cls = "Shell_SecondaryTrayWnd")
-        return 0
-    return hwnd
+    return cls = "Progman" || cls = "WorkerW" || cls = "Shell_TrayWnd" || cls = "Shell_SecondaryTrayWnd"
 }
 
 Apply(hwnd, r, action := "", step := 0) {
@@ -179,20 +173,28 @@ Apply(hwnd, r, action := "", step := 0) {
     Last := {hwnd: hwnd, action: action, step: step, rect: GetRect(hwnd)}
 }
 
-; True when the previous action was `action` on this window and it hasn't been moved since.
 Continues(hwnd, action) {
     if (Last.hwnd != hwnd || Last.action != action)
         return false
-    cur := GetRect(hwnd)
-    return cur.x = Last.rect.x && cur.y = Last.rect.y && cur.w = Last.rect.w && cur.h = Last.rect.h
+    return SameRect(GetRect(hwnd), Last.rect)
 }
+
+SameRect(a, b) => a.x = b.x && a.y = b.y && a.w = b.w && a.h = b.h
 
 NextStep(hwnd, action, n) => Continues(hwnd, action) ? Mod(Last.step + 1, n) : 0
 
-; Visible window bounds, excluding the invisible resize borders Windows 10/11 adds.
 GetRect(hwnd) {
+    v := VisibleRect(hwnd)
+    if !TiledFrames.Has(hwnd)
+        return v
+    border := TiledFrames[hwnd]
+    return {x: v.x + border, y: v.y + border, w: v.w - 2 * border, h: v.h - 2 * border}
+}
+
+VisibleRect(hwnd) {
+    static DWMWA_EXTENDED_FRAME_BOUNDS := 9
     buf := Buffer(16)
-    if DllCall("dwmapi\DwmGetWindowAttribute", "ptr", hwnd, "uint", 9, "ptr", buf, "uint", 16) = 0 {
+    if DllCall("dwmapi\DwmGetWindowAttribute", "ptr", hwnd, "uint", DWMWA_EXTENDED_FRAME_BOUNDS, "ptr", buf, "uint", 16) = 0 {
         l := NumGet(buf, 0, "int"), t := NumGet(buf, 4, "int")
         return {x: l, y: t, w: NumGet(buf, 8, "int") - l, h: NumGet(buf, 12, "int") - t}
     }
@@ -203,13 +205,20 @@ GetRect(hwnd) {
 MoveVisible(hwnd, r) {
     if WinGetMinMax(hwnd) != 0
         WinRestore(hwnd)
+    tiled := IsTiledRect(r, WorkAreaAt(r.x + r.w // 2, r.y + r.h // 2))
+    border := tiled ? BorderThickness(hwnd) : 0
     WinGetPos(&x, &y, &w, &h, hwnd)
-    v := GetRect(hwnd)
-    ol := v.x - x, ot := v.y - y, orr := (x + w) - (v.x + v.w), ob := (y + h) - (v.y + v.h)
-    WinMove(r.x - ol, r.y - ot, r.w + ol + orr, r.h + ot + ob, hwnd)
+    v := VisibleRect(hwnd)
+    invisibleLeft := v.x - x + border, invisibleTop := v.y - y + border
+    invisibleRight := (x + w) - (v.x + v.w) + border, invisibleBottom := (y + h) - (v.y + v.h) + border
+    WinMove(r.x - invisibleLeft, r.y - invisibleTop
+        , r.w + invisibleLeft + invisibleRight, r.h + invisibleTop + invisibleBottom, hwnd)
+    if tiled
+        TileFrame(hwnd, border)
+    else
+        UntileFrame(hwnd)
 }
 
-; Index of the monitor containing the window's center, or 0 if it's off-screen.
 MonitorOf(hwnd) {
     v := GetRect(hwnd)
     cx := v.x + v.w // 2, cy := v.y + v.h // 2
@@ -222,7 +231,18 @@ MonitorOf(hwnd) {
 }
 
 WorkArea(hwnd) {
-    MonitorGetWorkArea(MonitorOf(hwnd) || MonitorGetPrimary(), &l, &t, &r, &b)
+    v := GetRect(hwnd)
+    return WorkAreaAt(v.x + v.w // 2, v.y + v.h // 2)
+}
+
+WorkAreaAt(x, y) {
+    monitor := MonitorGetPrimary()
+    Loop MonitorGetCount() {
+        MonitorGet(A_Index, &l, &t, &r, &b)
+        if (x >= l && x < r && y >= t && y < b)
+            monitor := A_Index
+    }
+    MonitorGetWorkArea(monitor, &l, &t, &r, &b)
     return {x: l, y: t, w: r - l, h: b - t}
 }
 
@@ -239,11 +259,63 @@ SortedWorkAreas() {
     return mons
 }
 
-; ---------------------------------------------------------------- virtual desktops
+global TiledFrames := Map()
+SetTimer RefreshTiledFrames, 500
 
-; VirtualDesktopAccessor (github.com/Ciantic/VirtualDesktopAccessor) wraps the undocumented
-; virtual desktop COM API. Windows updates can break it; if it fails to load we fall back to
-; registry + Ctrl+Win+Left/Right switching, and skip pinning.
+IsTiledRect(r, wa) {
+    edgesTouched := (Abs(r.x - wa.x) <= 1) + (Abs(r.y - wa.y) <= 1)
+        + (Abs(r.x + r.w - wa.x - wa.w) <= 1) + (Abs(r.y + r.h - wa.y - wa.h) <= 1)
+    return edgesTouched >= 2
+}
+
+BorderThickness(hwnd) {
+    static DWMWA_VISIBLE_FRAME_BORDER_THICKNESS := 37
+    thickness := 0
+    hr := DllCall("dwmapi\DwmGetWindowAttribute", "ptr", hwnd, "uint", DWMWA_VISIBLE_FRAME_BORDER_THICKNESS, "uint*", &thickness, "uint", 4)
+    return hr = 0 ? thickness : 1
+}
+
+TileFrame(hwnd, border) {
+    if !TiledFrames.Has(hwnd)
+        SetFrame(hwnd, true)
+    TiledFrames[hwnd] := border
+}
+
+UntileFrame(hwnd) {
+    if !TiledFrames.Has(hwnd)
+        return
+    SetFrame(hwnd, false)
+    TiledFrames.Delete(hwnd)
+}
+
+SetFrame(hwnd, tiled) {
+    static DWMWA_WINDOW_CORNER_PREFERENCE := 33, DWMWCP_DEFAULT := 0, DWMWCP_DONOTROUND := 1
+    static DWMWA_BORDER_COLOR := 34, DWMWA_COLOR_DEFAULT := 0xFFFFFFFF, DWMWA_COLOR_NONE := 0xFFFFFFFE
+    corners := tiled ? DWMWCP_DONOTROUND : DWMWCP_DEFAULT
+    border := tiled ? DWMWA_COLOR_NONE : DWMWA_COLOR_DEFAULT
+    DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "uint", DWMWA_WINDOW_CORNER_PREFERENCE, "int*", corners, "uint", 4)
+    DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "uint", DWMWA_BORDER_COLOR, "uint*", border, "uint", 4)
+}
+
+RefreshTiledFrames() {
+    for hwnd in [TiledFrames*] {
+        if !WinExist(hwnd) {
+            TiledFrames.Delete(hwnd)
+            continue
+        }
+        try {
+            if !IsTiledRect(GetRect(hwnd), WorkArea(hwnd))
+                UntileFrame(hwnd)
+        }
+    }
+}
+
+RestoreAllFrames() {
+    for hwnd in TiledFrames
+        if WinExist(hwnd)
+            SetFrame(hwnd, false)
+}
+
 global VDA := A_ScriptDir "\VirtualDesktopAccessor\VirtualDesktopAccessor.dll"
 global VDAOk := DllCall("LoadLibrary", "Str", VDA, "Ptr") && DllCall(VDA "\GetDesktopCount", "Int") > 0
 global PinnedByUs := Map()
@@ -251,27 +323,28 @@ if VDAOk
     SetTimer PinSecondaryWindows, 500
 else
     TrayTip "VirtualDesktopAccessor failed to load; secondary monitor pinning is off.", "Spectacle"
-OnExit (*) => UnpinAll()
+OnExit (*) => (UnpinAll(), RestoreAllFrames(), 0)
 
 GoToDesktop(n) {
     if !VDAOk
         return GoToDesktopFallback(n)
-    while DllCall(VDA "\GetDesktopCount", "Int") < n {
-        Send "^#d"   ; creates a new desktop and switches to it
-        Sleep 300
-    }
+    while DllCall(VDA "\GetDesktopCount", "Int") < n
+        CreateDesktop()
     DllCall(VDA "\GoToDesktopNumber", "Int", n - 1, "Int")
 }
 
-; Keeps windows on non-primary monitors pinned to all desktops, so desktop switches only
-; affect the primary monitor. Windows we pinned get unpinned when they move to the primary.
+CreateDesktop() {
+    Send "^#d"
+    Sleep 300
+}
+
 PinSecondaryWindows() {
     primary := MonitorGetPrimary()
     for hwnd in WinGetList() {
         if !IsManageable(hwnd)
             continue
         try mon := MonitorOf(hwnd)
-        catch  ; window closed mid-scan
+        catch
             continue
         if !mon
             continue
@@ -290,20 +363,19 @@ PinSecondaryWindows() {
             PinnedByUs.Delete(hwnd)
 }
 
-; Visible, titled, non-tool, non-minimized top-level windows on the current desktop.
 IsManageable(hwnd) {
+    static WS_VISIBLE := 0x10000000, WS_EX_TOOLWINDOW := 0x80, DWMWA_CLOAKED := 14
     try {
         if (WinGetTitle(hwnd) = "" || WinGetMinMax(hwnd) = -1)
             return false
-        if !(WinGetStyle(hwnd) & 0x10000000) || (WinGetExStyle(hwnd) & 0x80)  ; WS_VISIBLE, WS_EX_TOOLWINDOW
+        if !(WinGetStyle(hwnd) & WS_VISIBLE) || (WinGetExStyle(hwnd) & WS_EX_TOOLWINDOW)
             return false
-        cls := WinGetClass(hwnd)
-        if (cls = "Progman" || cls = "WorkerW" || cls = "Shell_TrayWnd" || cls = "Shell_SecondaryTrayWnd")
+        if IsShellWindow(hwnd)
             return false
     } catch
         return false
     cloaked := 0
-    DllCall("dwmapi\DwmGetWindowAttribute", "ptr", hwnd, "uint", 14, "uint*", &cloaked, "uint", 4)  ; DWMWA_CLOAKED
+    DllCall("dwmapi\DwmGetWindowAttribute", "ptr", hwnd, "uint", DWMWA_CLOAKED, "uint*", &cloaked, "uint", 4)
     return !cloaked
 }
 
@@ -315,17 +387,13 @@ UnpinAll() {
             DllCall(VDA "\UnPinWindow", "Ptr", hwnd, "Int")
 }
 
-; Without the DLL: read the current desktop's position from the registry and step there
-; with Ctrl+Win+Left/Right, creating desktops as needed.
 GoToDesktopFallback(n) {
     loop 2 {
         d := DesktopState()
         if d.count >= n
             break
-        loop n - d.count {
-            Send "^#d"   ; creates a new desktop and switches to it
-            Sleep 300
-        }
+        loop n - d.count
+            CreateDesktop()
     }
     d := DesktopState()
     if !d.current

@@ -4,6 +4,7 @@
 [core]
     editor = vim
     excludesfile = /home/borfus/.gitignore_global
+    autocrlf = input
 [alias]
     co = checkout
     br = branch
