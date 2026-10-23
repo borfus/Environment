@@ -188,8 +188,8 @@ GetRect(hwnd) {
     v := VisibleRect(hwnd)
     if !TiledFrames.Has(hwnd)
         return v
-    border := TiledFrames[hwnd]
-    return {x: v.x + border, y: v.y + border, w: v.w - 2 * border, h: v.h - 2 * border}
+    pad := TiledFrames[hwnd]
+    return {x: v.x + pad.l, y: v.y + pad.t, w: v.w - pad.l - pad.r, h: v.h - pad.t - pad.b}
 }
 
 VisibleRect(hwnd) {
@@ -207,25 +207,63 @@ MoveVisible(hwnd, r) {
     if WinGetMinMax(hwnd) != 0
         WinRestore(hwnd)
     tiled := IsTiledRect(r, WorkAreaAt(r.x + r.w // 2, r.y + r.h // 2))
-    border := tiled ? BorderThickness(hwnd) : 0
+    pad := tiled ? FramePadding(hwnd, r) : {l: 0, t: 0, r: 0, b: 0}
     WinGetPos(&x, &y, &w, &h, hwnd)
     v := VisibleRect(hwnd)
-    invisibleLeft := v.x - x + border, invisibleTop := v.y - y + border
-    invisibleRight := (x + w) - (v.x + v.w) + border, invisibleBottom := (y + h) - (v.y + v.h) + border
+    invisibleLeft := v.x - x + pad.l, invisibleTop := v.y - y + pad.t
+    invisibleRight := (x + w) - (v.x + v.w) + pad.r, invisibleBottom := (y + h) - (v.y + v.h) + pad.b
     WinMove(r.x - invisibleLeft, r.y - invisibleTop
         , r.w + invisibleLeft + invisibleRight, r.h + invisibleTop + invisibleBottom, hwnd)
-    if tiled
-        TileFrame(hwnd, border)
-    else
+    if tiled {
+        TileFrame(hwnd, pad)
+        SetBorderColor(hwnd, pad.seam ? EdgeColor(hwnd, pad.seam) : BORDER_COLOR_NONE)
+    } else
         UntileFrame(hwnd)
+}
+
+FramePadding(hwnd, r) {
+    border := BorderThickness(hwnd)
+    cx := r.x + r.w // 2, cy := r.y + r.h // 2
+    home := MonitorAt(cx, cy)
+    onOtherMonitor(px, py) => MonitorAt(px, py) && MonitorAt(px, py) != home
+    pad := {l: border, t: border, r: border, b: border, seam: ""}
+    for side, beyond in Map("l", [r.x - 1, cy], "t", [cx, r.y - 1], "r", [r.x + r.w, cy], "b", [cx, r.y + r.h])
+        if onOtherMonitor(beyond[1], beyond[2])
+            pad.%side% := 0, pad.seam := side
+    return pad
+}
+
+EdgeColor(hwnd, side) {
+    Sleep 150
+    v := VisibleRect(hwnd), inset := BorderThickness(hwnd) + 1
+    counts := Map(), best := BORDER_COLOR_NONE, bestCount := 0
+    hdc := DllCall("GetDC", "ptr", 0, "ptr")
+    Loop 9 {
+        fraction := A_Index / 10
+        switch side {
+            case "l": x := v.x + inset, y := v.y + Round(v.h * fraction)
+            case "r": x := v.x + v.w - 1 - inset, y := v.y + Round(v.h * fraction)
+            case "t": x := v.x + Round(v.w * fraction), y := v.y + inset
+            case "b": x := v.x + Round(v.w * fraction), y := v.y + v.h - 1 - inset
+        }
+        color := DllCall("GetPixel", "ptr", hdc, "int", x, "int", y, "uint")
+        counts[color] := counts.Get(color, 0) + 1
+        if counts[color] > bestCount
+            best := color, bestCount := counts[color]
+    }
+    DllCall("ReleaseDC", "ptr", 0, "ptr", hdc)
+    return best
 }
 
 MonitorOf(hwnd) {
     v := GetRect(hwnd)
-    cx := v.x + v.w // 2, cy := v.y + v.h // 2
+    return MonitorAt(v.x + v.w // 2, v.y + v.h // 2)
+}
+
+MonitorAt(x, y) {
     Loop MonitorGetCount() {
         MonitorGet(A_Index, &l, &t, &r, &b)
-        if (cx >= l && cx < r && cy >= t && cy < b)
+        if (x >= l && x < r && y >= t && y < b)
             return A_Index
     }
     return 0
@@ -237,13 +275,7 @@ WorkArea(hwnd) {
 }
 
 WorkAreaAt(x, y) {
-    monitor := MonitorGetPrimary()
-    Loop MonitorGetCount() {
-        MonitorGet(A_Index, &l, &t, &r, &b)
-        if (x >= l && x < r && y >= t && y < b)
-            monitor := A_Index
-    }
-    MonitorGetWorkArea(monitor, &l, &t, &r, &b)
+    MonitorGetWorkArea(MonitorAt(x, y) || MonitorGetPrimary(), &l, &t, &r, &b)
     return {x: l, y: t, w: r - l, h: b - t}
 }
 
@@ -302,6 +334,7 @@ SetMonitorWallpaper(monitor, path) {
 }
 
 global TiledFrames := Map()
+global BORDER_COLOR_DEFAULT := 0xFFFFFFFF, BORDER_COLOR_NONE := 0xFFFFFFFE
 SetTimer RefreshTiledFrames, 500
 
 IsTiledRect(r, wa) {
@@ -317,10 +350,10 @@ BorderThickness(hwnd) {
     return hr = 0 ? thickness : 1
 }
 
-TileFrame(hwnd, border) {
+TileFrame(hwnd, pad) {
     if !TiledFrames.Has(hwnd)
         SetFrame(hwnd, true)
-    TiledFrames[hwnd] := border
+    TiledFrames[hwnd] := pad
 }
 
 UntileFrame(hwnd) {
@@ -332,11 +365,14 @@ UntileFrame(hwnd) {
 
 SetFrame(hwnd, tiled) {
     static DWMWA_WINDOW_CORNER_PREFERENCE := 33, DWMWCP_DEFAULT := 0, DWMWCP_DONOTROUND := 1
-    static DWMWA_BORDER_COLOR := 34, DWMWA_COLOR_DEFAULT := 0xFFFFFFFF, DWMWA_COLOR_NONE := 0xFFFFFFFE
     corners := tiled ? DWMWCP_DONOTROUND : DWMWCP_DEFAULT
-    border := tiled ? DWMWA_COLOR_NONE : DWMWA_COLOR_DEFAULT
     DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "uint", DWMWA_WINDOW_CORNER_PREFERENCE, "int*", corners, "uint", 4)
-    DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "uint", DWMWA_BORDER_COLOR, "uint*", border, "uint", 4)
+    SetBorderColor(hwnd, tiled ? BORDER_COLOR_NONE : BORDER_COLOR_DEFAULT)
+}
+
+SetBorderColor(hwnd, color) {
+    static DWMWA_BORDER_COLOR := 34
+    DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "uint", DWMWA_BORDER_COLOR, "uint*", color, "uint", 4)
 }
 
 RefreshTiledFrames() {
