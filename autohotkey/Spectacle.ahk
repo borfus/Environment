@@ -6,6 +6,7 @@ DPI_AWARENESS_PER_MONITOR_V2 := -4
 DllCall("SetThreadDpiAwarenessContext", "ptr", DPI_AWARENESS_PER_MONITOR_V2, "ptr")
 SetWinDelay -1
 A_IconTip := "Spectacle (AutoHotkey)"
+AddWallpaperMenu()
 
 #!Left::   Half("left")
 #!Right::  Half("right")
@@ -257,6 +258,47 @@ SortedWorkAreas() {
         mons.InsertAt(i, m)
     }
     return mons
+}
+
+AddWallpaperMenu() {
+    A_TrayMenu.Add()
+    primary := MonitorGetPrimary()
+    monitors := []
+    Loop MonitorGetCount() {
+        MonitorGet(A_Index, &l, &t)
+        m := {x: l, y: t, primary: A_Index = primary}
+        i := 1
+        while i <= monitors.Length && (monitors[i].x < m.x || (monitors[i].x = m.x && monitors[i].y < m.y))
+            i++
+        monitors.InsertAt(i, m)
+    }
+    for index, m in monitors
+        A_TrayMenu.Add("Set wallpaper for monitor " index (m.primary ? " (primary)" : "") "...", ChooseWallpaper.Bind(m))
+}
+
+ChooseWallpaper(monitor, *) {
+    path := FileSelect(1, A_MyDocuments "\..\Pictures", "Choose wallpaper", "Images (*.jpg; *.jpeg; *.png; *.bmp; *.gif; *.webp)")
+    if path != ""
+        SetMonitorWallpaper(monitor, path)
+}
+
+SetMonitorWallpaper(monitor, path) {
+    static CLSID_DesktopWallpaper := "{C2CF3110-460E-4fc1-B9D0-8A1C0C9CC4BD}"
+    static IID_IDesktopWallpaper := "{B92B56A9-8B55-4E14-9A89-0199BBB6F93B}"
+    static SET_WALLPAPER := 3, GET_MONITOR_DEVICE_PATH_AT := 5, GET_MONITOR_DEVICE_PATH_COUNT := 6, GET_MONITOR_RECT := 7
+    wallpaper := ComObject(CLSID_DesktopWallpaper, IID_IDesktopWallpaper)
+    ComCall(GET_MONITOR_DEVICE_PATH_COUNT, wallpaper, "uint*", &count := 0)
+    Loop count {
+        ComCall(GET_MONITOR_DEVICE_PATH_AT, wallpaper, "uint", A_Index - 1, "ptr*", &idPtr := 0)
+        id := StrGet(idPtr)
+        DllCall("ole32\CoTaskMemFree", "ptr", idPtr)
+        rect := Buffer(16)
+        try ComCall(GET_MONITOR_RECT, wallpaper, "wstr", id, "ptr", rect)
+        catch
+            continue
+        if (NumGet(rect, 0, "int") = monitor.x && NumGet(rect, 4, "int") = monitor.y)
+            ComCall(SET_WALLPAPER, wallpaper, "wstr", id, "wstr", path)
+    }
 }
 
 global TiledFrames := Map()

@@ -1,9 +1,13 @@
 param([switch]$UpdateDll)
 
 $ErrorActionPreference = 'Stop'
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) { throw 'Run this from an administrator PowerShell so the script can control elevated windows.' }
+
 $script = Join-Path $PSScriptRoot 'Spectacle.ahk'
 $exe = "$env:ProgramFiles\AutoHotkey\v2\AutoHotkey64.exe"
 $dll = Join-Path $PSScriptRoot 'VirtualDesktopAccessor\VirtualDesktopAccessor.dll'
+$taskName = 'Spectacle'
 
 if (-not (Test-Path $exe)) {
     Write-Host 'Installing AutoHotkey v2...'
@@ -28,12 +32,15 @@ if ($UpdateDll -or -not (Test-Path $dll)) {
     Write-Host "Downloaded VirtualDesktopAccessor $($release.tag_name): $($release.name)"
 }
 
-$lnk = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\Spectacle.lnk"
-$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk)
-$shortcut.TargetPath = $exe
-$shortcut.Arguments = "`"$script`""
-$shortcut.WorkingDirectory = $PSScriptRoot
-$shortcut.Save()
+$oldShortcut = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\Spectacle.lnk"
+if (Test-Path $oldShortcut) { Remove-Item $oldShortcut }
 
-Start-Process $exe -ArgumentList "`"$script`""
-Write-Host "Spectacle.ahk is running and will start at login ($lnk)."
+$user = "$env:USERDOMAIN\$env:USERNAME"
+$action = New-ScheduledTaskAction -Execute $exe -Argument "`"$script`"" -WorkingDirectory $PSScriptRoot
+$trigger = New-ScheduledTaskTrigger -AtLogOn -User $user
+$principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Highest
+$settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit 0 -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null
+
+Start-ScheduledTask -TaskName $taskName
+Write-Host "Spectacle.ahk is running as administrator and will start at login (Task Scheduler: $taskName)."

@@ -9,7 +9,7 @@ affect the primary monitor.
 Requires Windows 11 and `winget`, which comes with Windows 11.
 
 1. Clone this repo.
-2. From the repo root, run:
+2. From the repo root, in an **administrator** PowerShell, run:
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\autohotkey\install.ps1
    ```
@@ -18,12 +18,14 @@ Requires Windows 11 and `winget`, which comes with Windows 11.
    - downloads the latest
      [VirtualDesktopAccessor](https://github.com/Ciantic/VirtualDesktopAccessor) DLL into
      `autohotkey\VirtualDesktopAccessor\` (git-ignored)
-   - adds a Startup-folder shortcut so the script runs at login
+   - registers a Task Scheduler task (`Spectacle`) that starts the script as administrator at
+     login with no UAC prompt, so its hotkeys also work in administrator windows such as
+     elevated terminals
    - starts the script
 
    You can safely run it again; it closes the running copy and starts it again.
 
-The Startup shortcut points at the script in this repo. To change something, edit
+The scheduled task points at the script in this repo. To change something, edit
 `Spectacle.ahk` here, reload it (right-click the green **H** tray icon → **Reload Script**),
 and commit.
 
@@ -56,11 +58,21 @@ the primary monitor, the script pins every window on a non-primary monitor to al
 unpinned. Windows you pinned yourself are never unpinned, and closing the script unpins
 everything it pinned.
 
+## Per-monitor wallpapers
+
+When more than one virtual desktop exists, Windows 11's Settings app only offers a wallpaper
+per desktop, which applies to every monitor. Use the tray icon's **Set wallpaper for
+monitor N...** items instead. They set a wallpaper for one monitor on every desktop.
+
+If a desktop picks up its own wallpaper again, for example after you use "Set for desktop N"
+in Settings, switch to that desktop and use the tray menu once to clear it.
+
 ## Troubleshooting
 
 - **"VirtualDesktopAccessor failed to load" notification:** a Windows update probably
   changed the undocumented virtual desktop API. Check the project's releases for one that
   supports your build, then run `install.ps1 -UpdateDll`. Until then, Win+1–5 still works,
   but it switches every monitor and moves through each desktop in between.
-- **A window won't move or pin:** windows running as administrator, such as Task Manager
-  or an elevated terminal, can't be controlled by a non-elevated script.
+- **Hotkeys don't work in administrator windows:** the script must run as administrator,
+  which the `Spectacle` scheduled task does. If you started it some other way, such as by
+  double-clicking the file, exit it from the tray and run `Start-ScheduledTask Spectacle`.
