@@ -23,6 +23,7 @@ for hwnd in WinGetList("ahk_class AutoHotkey")
 Start-Process $exe -ArgumentList "`"$closer`"" -Wait
 Remove-Item $closer
 Start-Sleep -Seconds 1
+if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) { Stop-ScheduledTask -TaskName $taskName }
 
 if ($UpdateDll -or -not (Test-Path $dll)) {
     $release = Invoke-RestMethod 'https://api.github.com/repos/Ciantic/VirtualDesktopAccessor/releases/latest'
@@ -38,9 +39,12 @@ if (Test-Path $oldShortcut) { Remove-Item $oldShortcut }
 $user = "$env:USERDOMAIN\$env:USERNAME"
 $action = New-ScheduledTaskAction -Execute $exe -Argument "`"$script`"" -WorkingDirectory $PSScriptRoot
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User $user
+$trigger.Delay = 'PT15S'
 $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Highest
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit 0 -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null
 
 Start-ScheduledTask -TaskName $taskName
+Start-Sleep -Seconds 2
+if ((Get-ScheduledTask -TaskName $taskName).State -ne 'Running') { throw "The $taskName scheduled task did not start." }
 Write-Host "Spectacle.ahk is running as administrator and will start at login (Task Scheduler: $taskName)."

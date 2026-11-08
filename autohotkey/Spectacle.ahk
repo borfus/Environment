@@ -394,6 +394,41 @@ RestoreAllFrames() {
             SetFrame(hwnd, false)
 }
 
+global EVENT_SYSTEM_MOVESIZEEND := 0x000B
+global WindowDragEndHook := DllCall("SetWinEventHook", "uint", EVENT_SYSTEM_MOVESIZEEND, "uint", EVENT_SYSTEM_MOVESIZEEND
+    , "ptr", 0, "ptr", CallbackCreate(OnWindowDragEnd), "uint", 0, "uint", 0, "uint", 0, "ptr")
+if !WindowDragEndHook
+    TrayTip "Could not watch for window drags; drag-snapped windows keep Windows' outline.", "Spectacle"
+
+OnWindowDragEnd(hook, event, hwnd, objectId, childId, eventThread, eventTime) {
+    static OBJID_WINDOW := 0
+    if objectId = OBJID_WINDOW
+        SetTimer(RestyleAfterDrag.Bind(hwnd), -250)
+}
+
+RestyleAfterDrag(hwnd) {
+    try {
+        if !IsManageable(hwnd) || WinGetMinMax(hwnd) != 0
+            return
+    } catch
+        return
+    windowWorkArea := WorkArea(hwnd)
+    snappedRect := SnapEdgesToWorkArea(VisibleRect(hwnd), windowWorkArea)
+    if !IsTiledRect(snappedRect, windowWorkArea)
+        return UntileFrame(hwnd)
+    if TiledFrames.Has(hwnd)
+        TiledFrames.Delete(hwnd)
+    MoveVisible(hwnd, snappedRect)
+}
+
+SnapEdgesToWorkArea(r, wa) {
+    left := Abs(r.x - wa.x) <= 1 ? wa.x : r.x
+    top := Abs(r.y - wa.y) <= 1 ? wa.y : r.y
+    right := Abs(r.x + r.w - wa.x - wa.w) <= 1 ? wa.x + wa.w : r.x + r.w
+    bottom := Abs(r.y + r.h - wa.y - wa.h) <= 1 ? wa.y + wa.h : r.y + r.h
+    return {x: left, y: top, w: right - left, h: bottom - top}
+}
+
 global VDA := A_ScriptDir "\VirtualDesktopAccessor\VirtualDesktopAccessor.dll"
 global VDAOk := DllCall("LoadLibrary", "Str", VDA, "Ptr") && DllCall(VDA "\GetDesktopCount", "Int") > 0
 global PinnedByUs := Map()
