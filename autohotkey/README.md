@@ -45,10 +45,20 @@ Spectacle's modifiers are translated as: control → **Ctrl**, option → **Win*
 | ⌃⌥⇧ ← / → | Ctrl+Win+Shift+←/→ | Make smaller / larger |
 | ⌥⌘Z / ⌥⇧⌘Z | Win+Alt+Z / Win+Shift+Alt+Z | Undo / redo |
 | — | Win+1 … Win+5 | Go to virtual desktop N, creating it if needed |
+| — | Ctrl+Alt+Shift+X | Toggle the ASUS monitor's built-in crosshair |
+| — | Ctrl+Alt+Shift+C | Toggle the custom crosshair image overlay |
 
 These replace some built-in Windows shortcuts: Win+1–5 normally opens pinned taskbar apps,
 Ctrl+Win+←/→ normally switches desktops, and Game Bar or snapping uses some Win+Alt
 combinations.
+
+## Monitor crosshair
+
+`MonitorCrosshair\MonitorCrosshair.ahk` is included by `Spectacle.ahk`. Ctrl+Alt+Shift+X switches
+the ASUS monitor's own crosshair over DDC/CI (VCP code `0xE3`) and remembers the last style
+that was on. Ctrl+Alt+Shift+C shows the image named in `MonitorCrosshairSettings.ini` as a
+click-through overlay centred on the ASUS monitor; it is only visible over borderless or
+windowed games. Hotkeys, the built-in style number and the image are set in that ini file.
 
 ## Primary-monitor-only desktops
 

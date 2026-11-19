@@ -7,6 +7,7 @@ DllCall("SetThreadDpiAwarenessContext", "ptr", DPI_AWARENESS_PER_MONITOR_V2, "pt
 SetWinDelay -1
 A_IconTip := "Spectacle (AutoHotkey)"
 AddWallpaperMenu()
+#Include MonitorCrosshair\MonitorCrosshair.ahk
 
 #!Left::   Half("left")
 #!Right::  Half("right")
